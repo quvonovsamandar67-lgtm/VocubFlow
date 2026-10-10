@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VocabFlow — So'z yodlash</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-top">
+      <h1 class="logo">⚡ VocabFlow</h1>
+      <div class="header-controls">
+        <div class="lang-selector">
+          <button class="lang-btn active" data-lang="uz" title="O'zbek">🇺🇿</button>
+          <button class="lang-btn" data-lang="ru" title="Русский">🇷🇺</button>
+          <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
+        </div>
+        <button id="theme-toggle" class="theme-btn" title="Dark mode">🌙</button>
+      </div>
+    </div>
+    <p class="subtitle" data-i18n="subtitle">So'zlarni oson yodlang</p>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab active" data-view="add">
+      <span class="tab-icon">➕</span>
+      <span data-i18n="tabAdd">Qo'shish</span>
+    </button>
+    <button class="tab" data-view="list">
+      <span class="tab-icon">📚</span>
+      <span data-i18n="tabList">So'zlarim</span>
+    </button>
+    <button class="tab" data-view="dictionary">
+      <span class="tab-icon">📖</span>
+      <span data-i18n="tabDictionary">Lug'at</span>
+    </button>
+    <button class="tab" data-view="practice">
+      <span class="tab-icon">🎯</span>
+      <span data-i18n="tabPractice">Mashq</span>
+    </button>
+    <button class="tab" data-view="test">
+      <span class="tab-icon">🎮</span>
+      <span data-i18n="tabTest">Test</span>
+    </button>
+    <button class="tab" data-view="stats">
+      <span class="tab-icon">📊</span>
+      <span data-i18n="tabStats">Statistika</span>
+    </button>
+  </nav>
+
+  <!-- VIEW: QO'SHISH -->
+  <section id="view-add" class="view active">
+    <h2 data-i18n="addTitle">Yangi so'z qo'shish</h2>
+
+    <input type="text" id="input-foreign" data-i18n-placeholder="inputForeign" placeholder="Chet tilidagi so'z">
+    <button type="button" id="btn-auto-translate" class="auto-translate-btn">
+      <span>🌐</span>
+      <span data-i18n="btnAutoTranslate">Avtomatik tarjima qilish</span>
+    </button>
+    <input type="text" id="input-native" data-i18n-placeholder="inputNative" placeholder="Tarjima">
+    <input type="text" id="input-explanation" data-i18n-placeholder="inputExplanation" placeholder="Izoh (ixtiyoriy)">
+    <button id="btn-add" class="btn-primary">
+      <span data-i18n="btnAdd">Qo'shish</span>
+    </button>
+    <p id="add-message" class="message"></p>
+  </section>
+
+  <!-- VIEW: RO'YXAT -->
+  <section id="view-list" class="view">
+    <div class="list-header">
+      <h2 data-i18n="listTitle">Mening so'zlarim</h2>
+      <div class="list-actions">
+        <button id="btn-export" class="icon-btn" title="Eksport (JSON)">📤</button>
+        <button id="btn-import" class="icon-btn" title="Import (JSON)">📥</button>
+        <span id="word-count" class="badge">0</span>
+      </div>
+    </div>
+    <input type="file" id="import-file" accept=".json" hidden>
+    <ul id="word-list" class="word-list"></ul>
+    <p id="empty-list" class="empty" data-i18n="emptyList">Hozircha so'z yo'q.</p>
+  </section>
+
+  <!-- VIEW: LUG'AT -->
+  <section id="view-dictionary" class="view">
+    <h2 data-i18n="dictTitle">Lug'at</h2>
+
+    <input type="text" id="dict-search" data-i18n-placeholder="dictSearch" placeholder="So'z qidirish...">
+
+    <div class="dict-categories" id="dict-categories"></div>
+
+    <div class="dict-info">
+      <span id="dict-count" class="dict-count">0 ta so'z</span>
+    </div>
+
+    <ul id="dict-list" class="word-list"></ul>
+    <p id="dict-empty" class="empty hidden" data-i18n="dictEmpty">So'z topilmadi.</p>
+  </section>
+
+  <!-- VIEW: MASHQ -->
+  <section id="view-practice" class="view">
+    <h2 data-i18n="practiceTitle">Mashq</h2>
+
+    <div id="practice-start" class="practice-start">
+      <p data-i18n="practiceInfo">Har bir so'zni 3 marta to'g'ri yozishingiz kerak.</p>
+      <button id="btn-start" class="btn-primary">
+        <span data-i18n="btnStart">Boshlash</span>
+      </button>
+    </div>
+
+    <div id="practice-area" class="hidden">
+      <div class="progress-wrap">
+        <div class="progress-info">
+          <span id="progress-text">0 / 0</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+      </div>
+
+      <div class="card">
+        <p class="prompt-label" data-i18n="promptLabel">Tarjima:</p>
+        <p id="prompt-word" class="prompt-word">—</p>
+        <p id="prompt-explanation" class="prompt-explanation"></p>
+        <button id="btn-voice-practice" class="voice-btn" title="Ovoz">🔊</button>
+        <p class="prompt-hint" data-i18n="promptHint">Chet tilidagi so'zni yozing:</p>
+        <input type="text" id="practice-input" data-i18n-placeholder="practicePlaceholder" placeholder="Javobingizni yozing..." autocomplete="off">
+        <button id="btn-check" class="btn-primary">
+          <span data-i18n="btnCheck">Tekshirish</span>
+        </button>
+        <p id="practice-feedback" class="feedback"></p>
+        <div class="counter">
+          <span id="word-progress" class="counter-badge">0/3</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="practice-done" class="hidden done-screen">
+      <h3 data-i18n="doneTitle">🎉 Tabriklaymiz!</h3>
+      <p data-i18n="doneText">Barcha so'zlarni o'rgandingiz!</p>
+      <button id="btn-restart" class="btn-primary">
+        <span data-i18n="btnRestart">Yana boshlash</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- VIEW: TEST -->
+  <section id="view-test" class="view">
+    <h2 data-i18n="testTitle">Test rejimi</h2>
+
+    <div id="test-start" class="practice-start">
+      <p data-i18n="testInfo">4 variantdan to'g'ri javobni tanlang.</p>
+      <button id="btn-test-start" class="btn-primary">
+        <span data-i18n="btnTestStart">Boshlash</span>
+      </button>
+    </div>
+
+    <div id="test-area" class="hidden">
+      <div class="progress-wrap">
+        <div class="progress-info">
+          <span id="test-progress-text">0 / 0</span>
+          <span id="test-score">0</span>
+        </div>
+        <div class="progress-bar"><div id="test-progress-fill"></div></div>
+      </div>
+
+      <div class="card">
+        <p class="prompt-label" data-i18n="testQuestion">Tarjima:</p>
+        <p id="test-prompt-word" class="prompt-word">—</p>
+        <p id="test-prompt-explanation" class="prompt-explanation"></p>
+        <p class="prompt-hint" data-i18n="testHint">To'g'ri javobni tanlang:</p>
+        <div id="test-options" class="test-options"></div>
+        <p id="test-feedback" class="feedback"></p>
+      </div>
+    </div>
+
+    <div id="test-done" class="hidden done-screen">
+      <h3 data-i18n="testDoneTitle">🎉 Test tugadi!</h3>
+      <p id="test-result-text" class="test-result-text"></p>
+      <button id="btn-test-restart" class="btn-primary">
+        <span data-i18n="btnTestRestart">Yana boshlash</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- VIEW: STATISTIKA -->
+  <section id="view-stats" class="view">
+    <h2 data-i18n="statsTitle">Statistika</h2>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label" data-i18n="statTotal">Jami so'z</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-learned">0</div>
+        <div class="stat-label" data-i18n="statLearned">O'rganilgan</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-percent">0%</div>
+        <div class="stat-label" data-i18n="statPercent">Foiz</div>
+      </div>
+    </div>
+
+    <div class="stats-info">
+      <div class="info-row">
+        <span class="info-icon">🔥</span>
+        <span class="info-label" data-i18n="infoStreak">Kunlik streak</span>
+        <span class="info-value" id="stat-streak">0 kun</span>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📅</span>
+        <span class="info-label" data-i18n="infoToday">Bugun</span>
+        <span class="info-value" id="stat-today">0</span>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🏆</span>
+        <span class="info-label" data-i18n="infoBest">Eng yaxshi streak</span>
+        <span class="info-value" id="stat-best">0 kun</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="dictionary.js"></script>
+<script src="dictionary-1.js"></script>
+<script src="dictionary-2.js"></script>
+<script src="dictionary-3.js"></script>
+<script src="dictionary-4.js"></script>
+<script src="dictionary-5.js"></script>
+<script src="dictionary-6.js"></script>
+<script src="dictionary-7.js"></script>
+<script src="dictionary-8.js"></script>
+<script src="dictionary-9.js"></script>
+<script src="dictionary-10.js"></script>
+
+<script src="script.js"></script>
+</body>
+</html>
